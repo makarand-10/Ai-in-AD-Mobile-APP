@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Sneekssnooks Mobile</title>
+
+    <!-- React & ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://unpkg.com/history@5/umd/history.production.min.js"></script>
+    <script src="https://unpkg.com/react-router@6.3.0/umd/react-router.production.min.js"></script>
+    <script src="https://unpkg.com/react-router-dom@6.3.0/umd/react-router-dom.production.min.js"></script>
+    <script src="https://unpkg.com/framer-motion@10.16.4/dist/framer-motion.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Oswald:wght@500;700&display=swap"
+        rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #141414;
+            --text-primary: #FFFFFF;
+            --text-secondary: #B0B0B0;
+            --accent: #E50914;
+            --accent-hover: #ff1f1f;
+            --border-color: #2a2a2a;
+            --header-height: 60px;
+            --bottom-nav-height: 80px;
+            --font-family: 'Inter', sans-serif;
+            --font-display: 'Oswald', sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.5;
+            overflow-x: hidden;
+            padding-bottom: var(--bottom-nav-height);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        /* Fix blue links */
+        input,
+        textarea,
+        button {
+            font-family: inherit;
+            font-size: 16px;
+        }
+
+        .app-container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .page-content {
+            padding: 80px 16px 24px 16px;
+            flex: 1;
+        }
+
+        /* Top Header */
+        .top-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: var(--header-height);
+            background: rgba(10, 10, 10, 0.85);
+            backdrop-filter: blur(12px);
+            z-index: 100;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.3s;
+        }
+
+        .logo {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            color: var(--text-primary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-decoration: none;
+            font-weight: 700;
+        }
+
+        /* Bottom Nav */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: var(--bottom-nav-height);
+            background: rgba(20, 20, 20, 0.95);
+            backdrop-filter: blur(12px);
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            z-index: 100;
+            padding-bottom: env(safe-area-inset-bottom);
+            padding-top: 8px;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            width: 100%;
+            height: 100%;
+            transition: color 0.2s;
+        }
+
+        .nav-item.active {
+            color: var(--text-primary);
+        }
+
+        .nav-icon {
+            font-size: 20px;
+            position: relative;
+        }
+
+        .nav-label {
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .badge {
+            position: absolute;
+            top: -6px;
+            right: -8px;
+            background: var(--accent);
+            color: white;
+            font-size: 9px;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid var(--bg-secondary);
+        }
+
+        /* Hero Section (Mobile) */
+        .mobile-hero {
+            height: 70vh;
+            margin: -80px -16px 32px -16px;
+            background: url('https://images.unsplash.com/photo-1556906781-9a412961d289?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80') no-repeat center center/cover;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .hero-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(180deg, rgba(0, 0, 0, 0.2) 0%, var(--bg-primary) 100%);
+        }
+
+        .hero-text {
+            position: relative;
+            z-index: 2;
+            padding: 24px;
+            margin-top: 100px;
+        }
+
+        .hero-title {
+            font-family: var(--font-display);
+            font-size: 3.5rem;
+            text-transform: uppercase;
+            line-height: 0.9;
+            margin-bottom: 8px;
+            text-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+        }
+
+        .hero-subtitle {
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 300;
+            letter-spacing: 1px;
+            margin-bottom: 24px;
+            text-transform: uppercase;
+        }
+
+        .hero-btn {
+            background: var(--text-primary);
+            color: var(--bg-primary);
+            padding: 12px 32px;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+            border-radius: 2px;
+        }
+
+        /* Product Grid */
+        .section-header {
+            margin-bottom: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        .section-title {
+            font-family: var(--font-display);
+            font-size: 2rem;
+            text-transform: uppercase;
+            line-height: 1;
+            margin: 0;
+        }
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 24px;
+        }
+
+        .product-card {
+            background: var(--bg-secondary);
+            border-radius: 4px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .card-image-container {
+            position: relative;
+            padding-top: 120%;
+            background: #222;
+        }
+
+        .card-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .card-details {
+            padding: 16px;
+            position: relative;
+        }
+
+        .card-title {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 500;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            color: var(--text-primary);
+        }
+
+        /* Explicitly set color */
+        .card-price {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            margin-bottom: 12px;
+            display: block;
+        }
+
+        .add-btn {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 12px;
+            width: 100%;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+            transition: 0.2s;
+        }
+
+        .add-btn:active {
+            background: var(--text-primary);
+            color: var(--bg-primary);
+        }
+
+        /* Product Details */
+        .detail-image-container {
+            height: 50vh;
+            margin: -80px -16px 24px -16px;
+            position: relative;
+        }
+
+        .detail-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .back-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 10;
+            background: rgba(0, 0, 0, 0.5);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(4px);
+            border: none;
+        }
+
+        .detail-content {
+            padding-bottom: 40px;
+        }
+
+        .detail-title {
+            font-family: var(--font-display);
+            font-size: 3rem;
+            line-height: 0.9;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .detail-price {
+            font-size: 1.5rem;
+            color: var(--text-secondary);
+            margin-bottom: 24px;
+            display: block;
+        }
+
+        .size-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+            margin-bottom: 32px;
+        }
+
+        .size-btn {
+            aspect-ratio: 1;
+            border: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            background: transparent;
+        }
+
+        .size-btn.selected {
+            background: var(--text-primary);
+            color: var(--bg-primary);
+            border-color: var(--text-primary);
+            font-weight: 700;
+        }
+
+        .cta-btn {
+            background: var(--accent);
+            color: white;
+            width: 100%;
+            padding: 16px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 1rem;
+            border-radius: 2px;
+            border: none;
+        }
+
+        /* Forms & Inputs */
+        input,
+        select,
+        textarea {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            color: white;
+            padding: 16px;
+            border-radius: 4px;
+            width: 100%;
+            font-size: 1rem;
+            outline: none;
+        }
+
+        input:focus {
+            border-color: var(--text-secondary);
+        }
+
+        .primary-btn {
+            background: var(--text-primary);
+            color: var(--bg-primary);
+            padding: 16px;
+            width: 100%;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-radius: 2px;
+            border: none;
+        }
+
+        /* Reviews */
+        .reviews-section {
+            margin-top: 40px;
+            padding-top: 32px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .star-rating {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .star-btn {
+            font-size: 28px;
+            color: #333;
+            background: none;
+            border: none;
+            padding: 0;
+        }
+
+        .star-btn.filled {
+            color: #fff;
+        }
+
+        .review-item {
+            margin-bottom: 24px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        /* Cart Controls */
+        .qty-controls {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: #222;
+            padding: 4px 12px;
+            border-radius: 4px;
+            width: fit-content;
+            margin-top: 8px;
+        }
+
+        .qty-btn {
+            color: white;
+            font-size: 16px;
+            background: none;
+            border: none;
+            padding: 0 4px;
+        }
+
+        .qty-val {
+            font-weight: 600;
+            font-size: 14px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, createContext, useContext } = React;
+        const { HashRouter, Routes, Route, NavLink, useNavigate, useParams, useLocation } = ReactRouterDOM;
+        const { motion, AnimatePresence } = window.Motion;
+
+        // --- DATA ---
+        const initialProducts = [
+            { id: 1, name: "Air Jordan 1 High OG", price: 16995, image: "https://images.unsplash.com/photo-1552346154-21d32810aba3?auto=format&fit=crop&w=800&q=80", category: "High Tops", description: "The classic that started it all.", sizes: [7, 8, 9, 10, 11] },
+            { id: 2, name: "Yeezy Boost 350 V2", price: 22999, image: "https://images.unsplash.com/photo-1515955656352-a1fa3ffcd111?auto=format&fit=crop&w=800&q=80", category: "Runners", description: "Unmatched comfort.", sizes: [6, 7, 8, 9, 10, 11] },
+            { id: 3, name: "Nike Dunk Low Retro", price: 9695, image: "https://images.unsplash.com/photo-1525966222134-fcfa99b8ae77?auto=format&fit=crop&w=800&q=80", category: "Low Tops", description: "Classic court style.", sizes: [7, 8, 9, 10, 11] },
+            { id: 4, name: "New Balance 550", price: 10999, image: "https://images.unsplash.com/photo-1551107696-a4b0c5a0d9a2?auto=format&fit=crop&w=800&q=80", category: "Retro Court", description: "Simple & Clean.", sizes: [8, 9, 10, 11] }
+        ];
+
+        // --- CONTEXT ---
+        const AppContext = createContext();
+        const AppProvider = ({ children }) => {
+            const [cart, setCart] = useState(() => JSON.parse(localStorage.getItem('mobile_cart')) || []);
+            useEffect(() => localStorage.setItem('mobile_cart', JSON.stringify(cart)), [cart]);
+
+            const addToCart = (product, size) => {
+                setCart(prev => {
+                    const exists = prev.find(p => p.id === product.id && p.size === size);
+                    return exists
+                        ? prev.map(p => p.id === product.id && p.size === size ? { ...p, quantity: p.quantity + 1 } : p)
+                        : [...prev, { ...product, size, quantity: 1 }];
+                });
+            };
+
+            const updateQuantity = (id, size, delta) => {
+                setCart(prev => prev.map(p => {
+                    if (p.id === id && p.size === size) {
+                        return { ...p, quantity: Math.max(1, p.quantity + delta) };
+                    }
+                    return p;
+                }));
+            };
+
+            const removeFromCart = (id, size) => setCart(prev => prev.filter(p => !(p.id === id && p.size === size)));
+
+            const [user, setUser] = useState(() => JSON.parse(localStorage.getItem('mobile_user')) || {
+                name: "Guest User",
+                email: "guest@sneekssnooks.com",
+                avatar: "https://images.unsplash.com/photo-1633332755192-727a05c4013d?w=200",
+                addresses: [{ id: 1, label: "Home", text: "123 Linking Rd, Mumbai", isDefault: true }]
+            });
+            useEffect(() => localStorage.setItem('mobile_user', JSON.stringify(user)), [user]);
+
+            const updateUser = (data) => setUser(prev => ({ ...prev, ...data }));
+            const addAddress = (addr) => setUser(prev => ({ ...prev, addresses: [...prev.addresses, { ...addr, id: Date.now() }] }));
+            const deleteAddress = (id) => setUser(prev => ({ ...prev, addresses: prev.addresses.filter(a => a.id !== id) }));
+
+            const [reviews, setReviews] = useState(() => JSON.parse(localStorage.getItem('mobile_reviews')) || {});
+            useEffect(() => localStorage.setItem('mobile_reviews', JSON.stringify(reviews)), [reviews]);
+            const addReview = (productId, review) => setReviews(prev => ({ ...prev, [productId]: [...(prev[productId] || []), { ...review, id: Date.now(), date: new Date().toLocaleDateString() }] }));
+
+            return <AppContext.Provider value={{ cart, addToCart, removeFromCart, updateQuantity, user, updateUser, addAddress, deleteAddress, reviews, addReview }}>{children}</AppContext.Provider>;
+        };
+
+        const useApp = () => useContext(AppContext);
+
+        // --- COMPONENTS ---
+        const Navbar = () => {
+            const { cart } = useApp();
+            const count = cart.reduce((acc, item) => acc + item.quantity, 0);
+            return (
+                <nav className="bottom-nav">
+                    <NavLink to="/" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+                        <i className="fa-solid fa-home nav-icon"></i>
+                        <span className="nav-label">Home</span>
+                    </NavLink>
+                    <NavLink to="/cart" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+                        <div className="nav-icon">
+                            <i className="fa-solid fa-shopping-bag"></i>
+                            {count > 0 && <span className="badge">{count}</span>}
+                        </div>
+                        <span className="nav-label">Bag</span>
+                    </NavLink>
+                    <NavLink to="/profile" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+                        <i className="fa-solid fa-user nav-icon"></i>
+                        <span className="nav-label">Profile</span>
+                    </NavLink>
+                </nav>
+            );
+        };
+
+        const Home = () => {
+            return (
+                <div className="page-content">
+                    <div className="mobile-hero">
+                        <div className="hero-overlay"></div>
+                        <div className="hero-text">
+                            <h1 className="hero-title">Sneeks Snooks</h1>
+                            <p className="hero-subtitle">Premium Streetwear</p>
+                            <button className="hero-btn" onClick={() => document.getElementById('grid').scrollIntoView({ behavior: 'smooth' })}>Shop Now</button>
+                        </div>
+                    </div>
+
+                    <div id="grid">
+                        <div className="section-header">
+                            <h2 className="section-title">New Drops</h2>
+                        </div>
+                        <div className="product-grid">
+                            {initialProducts.map(p => (
+                                <NavLink to={`/product/${p.id}`} key={p.id} className="product-card">
+                                    <div className="card-image-container">
+                                        <img src={p.image} className="card-image" />
+                                    </div>
+                                    <div className="card-details">
+                                        <h3 className="card-title">{p.name}</h3>
+                                        <span className="card-price">₹{p.price.toLocaleString()}</span>
+                                        <button className="add-btn">View Details</button>
+                                    </div>
+                                </NavLink>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            )
+        };
+
+        const ProductDetails = () => {
+            const { id } = useParams();
+            const navigate = useNavigate();
+            const { addToCart, reviews, addReview, user } = useApp();
+            const product = initialProducts.find(p => p.id === parseInt(id));
+            const [selectedSize, setSize] = useState(null);
+            const [rating, setRating] = useState(0);
+            const [reviewText, setReviewText] = useState("");
+
+            if (!product) return <div>Loading...</div>;
+
+            return (
+                <motion.div className="page-content" initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={{ paddingTop: 0 }}>
+                    <div className="detail-image-container">
+                        <button className="back-btn" onClick={() => navigate(-1)}><i className="fa-solid fa-arrow-left"></i></button>
+                        <img src={product.image} className="detail-image" />
+                    </div>
+
+                    <div className="detail-content">
+                        <h1 className="detail-title">{product.name}</h1>
+                        <span className="detail-price">₹{product.price.toLocaleString()}</span>
+                        <p style={{ color: 'var(--text-secondary)', marginBottom: 32 }}>{product.description}</p>
+
+                        <h3 style={{ marginBottom: 16, fontSize: '0.9rem', textTransform: 'uppercase', letterSpacing: 1 }}>Select Size (US)</h3>
+                        <div className="size-grid">
+                            {product.sizes.map(s => (
+                                <button key={s} className={`size-btn ${selectedSize === s ? 'selected' : ''}`} onClick={() => setSize(s)}>{s}</button>
+                            ))}
+                        </div>
+
+                        <button className="cta-btn" onClick={() => selectedSize ? addToCart(product, selectedSize) : alert('Select Size')}>
+                            Add to Bag — ₹{product.price.toLocaleString()}
+                        </button>
+
+                        <div className="reviews-section">
+                            <h3 className="section-title">Reviews</h3>
+                            <div style={{ background: 'var(--bg-secondary)', padding: 16, borderRadius: 4, marginBottom: 24 }}>
+                                <div className="star-rating">
+                                    {[1, 2, 3, 4, 5].map(s => <i key={s} className={`fa-solid fa-star star-btn ${s <= rating ? 'filled' : ''}`} onClick={() => setRating(s)}></i>)}
+                                </div>
+                                <textarea placeholder="Write a review..." rows="2" value={reviewText} onChange={e => setReviewText(e.target.value)}></textarea>
+                                <button className="add-btn" style={{ marginTop: 8 }} onClick={() => {
+                                    if (rating > 0) { addReview(id, { user: user.name, rating, text: reviewText }); setReviewText(''); setRating(0); }
+                                }}>Post Review</button>
+                            </div>
+
+                            {(reviews[id] || []).map(r => (
+                                <div key={r.id} className="review-item">
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
+                                        <span style={{ fontWeight: 600 }}>{r.user}</span>
+                                        <span style={{ color: '#ECB22E' }}>{'★'.repeat(r.rating)}</span>
+                                    </div>
+                                    <p style={{ color: 'var(--text-secondary)' }}>{r.text}</p>
+                                </div>
+                            ))}
+                            {(reviews[id] || []).length === 0 && <p style={{ color: '#666', fontStyle: 'italic' }}>No reviews yet.</p>}
+                        </div>
+                    </div>
+                </motion.div>
+            );
+        };
+
+        const Profile = () => {
+            const { user, updateUser, addAddress, deleteAddress } = useApp();
+            const [editing, setEditing] = useState(false);
+            const [newAddr, setNewAddr] = useState("");
+
+            // Dummy Order History Data
+            const orders = [
+                { id: "#ORD-7782", date: "Oct 24, 2023", total: 16995, status: "Delivered", items: ["Air Jordan 1 High OG"] },
+                { id: "#ORD-9921", date: "Sep 12, 2023", total: 9695, status: "Delivered", items: ["Nike Dunk Low Retro"] }
+            ];
+
+            return (
+                <div className="page-content">
+                    <h1 className="section-title">Profile</h1>
+
+                    {/* User Info Card */}
+                    <div style={{ background: 'var(--bg-secondary)', padding: 24, borderRadius: 8, marginBottom: 32, textAlign: 'center', border: '1px solid var(--border-color)' }}>
+                        <div style={{ width: 100, height: 100, borderRadius: '50%', overflow: 'hidden', margin: '0 auto 16px', border: '2px solid var(--accent)' }}>
+                            <img src={user.avatar} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                        </div>
+
+                        {editing ? (
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                                <input value={user.name} onChange={e => updateUser({ name: e.target.value })} placeholder="Full Name" />
+                                <input value={user.email} onChange={e => updateUser({ email: e.target.value })} placeholder="Email Address" />
+                                <button className="primary-btn" onClick={() => setEditing(false)} style={{ fontSize: '0.9rem' }}>Save Changes</button>
+                            </div>
+                        ) : (
+                            <>
+                                <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '1.8rem', textTransform: 'uppercase', marginBottom: 4 }}>{user.name}</h2>
+                                <p style={{ color: 'var(--text-secondary)', marginBottom: 16 }}>{user.email}</p>
+                                <button onClick={() => setEditing(true)} style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', textDecoration: 'underline', cursor: 'pointer', background: 'none', border: 'none', padding: 0 }}>Edit Profile</button>
+                            </>
+                        )}
+                    </div>
+
+                    {/* Order History */}
+                    <h3 style={{ marginBottom: 16, textTransform: 'uppercase', fontSize: '1rem', letterSpacing: 1, borderBottom: '1px solid var(--border-color)', paddingBottom: 8 }}>
+                        <i className="fa-solid fa-box-open" style={{ marginRight: 8, color: 'var(--accent)' }}></i> My Orders
+                    </h3>
+                    <div style={{ marginBottom: 32 }}>
+                        {orders.map(order => (
+                            <div key={order.id} style={{ background: 'var(--bg-secondary)', padding: 16, borderRadius: 4, marginBottom: 12, border: '1px solid rgba(255,255,255,0.05)' }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
+                                    <span style={{ fontWeight: 600, fontFamily: 'var(--font-display)', letterSpacing: 1 }}>{order.id}</span>
+                                    <span style={{ fontSize: '0.8rem', background: order.status === 'Delivered' ? 'rgba(76, 175, 80, 0.2)' : '#333', color: order.status === 'Delivered' ? '#4CAF50' : '#fff', padding: '2px 8px', borderRadius: 4 }}>{order.status}</span>
+                                </div>
+                                <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginBottom: 4 }}>{order.items.join(", ")}</p>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem', color: '#666' }}>
+                                    <span>{order.date}</span>
+                                    <span style={{ color: 'var(--text-primary)', fontWeight: 600 }}>₹{order.total.toLocaleString()}</span>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+
+                    {/* Address Book */}
+                    <h3 style={{ marginBottom: 16, textTransform: 'uppercase', fontSize: '1rem', letterSpacing: 1, borderBottom: '1px solid var(--border-color)', paddingBottom: 8 }}>
+                        <i className="fa-solid fa-map-marker-alt" style={{ marginRight: 8, color: 'var(--accent)' }}></i> Addresses
+                    </h3>
+                    <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
+                        <input placeholder="New address (e.g. Home, 123 St...)" value={newAddr} onChange={e => setNewAddr(e.target.value)} />
+                        <button className="primary-btn" style={{ width: 'auto', padding: '0 24px' }} onClick={() => { if (newAddr) { addAddress({ label: 'New', text: newAddr }); setNewAddr(''); } }}>Add</button>
+                    </div>
+                    {user.addresses.map(a => (
+                        <div key={a.id} style={{ background: 'var(--bg-secondary)', padding: 16, borderRadius: 4, marginBottom: 8, display: 'flex', justifyContent: 'space-between', alignItems: 'center', border: '1px solid rgba(255,255,255,0.05)' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                                <i className="fa-solid fa-location-dot" style={{ color: '#666' }}></i>
+                                <span style={{ fontSize: '0.95rem' }}>{a.text}</span>
+                            </div>
+                            <button onClick={() => deleteAddress(a.id)} style={{ color: '#ff4d4d', background: 'none', border: 'none', cursor: 'pointer' }}><i className="fa-solid fa-trash"></i></button>
+                        </div>
+                    ))}
+
+                    <button style={{ width: '100%', marginTop: 32, padding: 16, border: '1px solid var(--border-color)', color: 'var(--text-secondary)', background: 'transparent', borderRadius: 4, textTransform: 'uppercase', fontSize: '0.9rem', letterSpacing: 1 }}>Log Out</button>
+                </div>
+            )
+        };
+
+        const Cart = () => {
+            const { cart, removeFromCart, updateQuantity } = useApp();
+            return (
+                <div className="page-content">
+                    <h1 className="section-title">My Bag</h1>
+                    {cart.length === 0 ? <div style={{ height: '50vh', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#666' }}>Your bag is empty</div> :
+                        cart.map(item => (
+                            <div key={item.id + item.size} style={{ display: 'flex', gap: 16, marginBottom: 24, position: 'relative' }}>
+                                <img src={item.image} style={{ width: 100, height: 120, objectFit: 'cover', background: '#222' }} />
+                                <div style={{ flex: 1 }}>
+                                    <h3 style={{ fontFamily: 'var(--font-display)', textTransform: 'uppercase', fontSize: '1.2rem' }}>{item.name}</h3>
+                                    <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginBottom: 8 }}>Size: {item.size}</p>
+                                    <span style={{ color: 'var(--accent)', fontWeight: 600 }}>₹{item.price.toLocaleString()}</span>
+
+                                    <div className="qty-controls">
+                                        <button className="qty-btn" onClick={() => updateQuantity(item.id, item.size, -1)}>−</button>
+                                        <span className="qty-val">{item.quantity}</span>
+                                        <button className="qty-btn" onClick={() => updateQuantity(item.id, item.size, 1)}>+</button>
+                                    </div>
+                                </div>
+                                <button onClick={() => removeFromCart(item.id, item.size)} style={{ position: 'absolute', top: 0, right: 0, color: '#666', background: 'none', border: 'none', padding: 8 }}><i className="fa-solid fa-times"></i></button>
+                            </div>
+                        ))}
+                    {cart.length > 0 && <button className="cta-btn" style={{ position: 'sticky', bottom: 90 }}>Checkout</button>}
+                </div>
+            )
+        };
+
+        const App = () => (
+            <HashRouter>
+                <AppProvider>
+                    <div className="app-container">
+                        <AnimatePresence mode="wait">
+                            <Routes>
+                                <Route path="/" element={<Home />} />
+                                <Route path="/product/:id" element={<ProductDetails />} />
+                                <Route path="/profile" element={<Profile />} />
+                                <Route path="/cart" element={<Cart />} />
+                            </Routes>
+                        </AnimatePresence>
+                        <Navbar />
+                    </div>
+                </AppProvider>
+            </HashRouter>
+        );
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+
+</body>
+
+</html>
